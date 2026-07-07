@@ -1,0 +1,304 @@
+openapi: 3.0.3
+info:
+  title: Investment Data API
+  version: 1.0.0
+  description: Financial data middleware API for GPT Actions.
+servers:
+  - url: https://your-deployed-api-domain.com
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: token
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
+            user_action:
+              type: string
+    Metadata:
+      type: object
+      properties:
+        source:
+          type: string
+        source_type:
+          type: string
+        retrieved_at:
+          type: string
+          format: date-time
+        provider_as_of:
+          type: string
+          nullable: true
+        currency:
+          type: string
+          nullable: true
+        unit:
+          type: string
+          nullable: true
+        is_latest_available:
+          type: boolean
+        staleness_check:
+          type: string
+        warnings:
+          type: array
+          items:
+            type: string
+    DataQualityReport:
+      type: object
+      properties:
+        can_analyze:
+          type: boolean
+        successful_sections:
+          type: array
+          items:
+            type: string
+        missing_sections:
+          type: array
+          items:
+            type: string
+        stale_sections:
+          type: array
+          items:
+            type: string
+        non_official_sources:
+          type: array
+          items:
+            type: string
+        source_conflicts:
+          type: array
+          items:
+            type: string
+        blocking_issues:
+          type: array
+          items:
+            type: string
+        warnings:
+          type: array
+          items:
+            type: string
+        required_user_action:
+          type: array
+          items:
+            type: string
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Health check
+      security: []
+      responses:
+        "200":
+          description: Service status.
+  /v1/equity/snapshot:
+    get:
+      operationId: getEquitySnapshot
+      summary: Get equity price and valuation snapshot.
+      parameters:
+        - name: market
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [US, CN]
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Equity snapshot with metadata.
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /v1/equity/financials:
+    get:
+      operationId: getEquityFinancials
+      summary: Get income statement, balance sheet, and cash flow statement.
+      parameters:
+        - name: market
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [US, CN]
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: period_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [annual, quarterly, ttm]
+            default: annual
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 8
+      responses:
+        "200":
+          description: Financial statements with metadata.
+  /v1/equity/ratios:
+    get:
+      operationId: getEquityRatios
+      summary: Get financial ratios and calculation methods.
+      parameters:
+        - name: market
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [US, CN]
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: period
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [latest, ttm, annual]
+            default: latest
+      responses:
+        "200":
+          description: Financial ratios with metadata.
+  /v1/equity/valuation:
+    get:
+      operationId: getEquityValuation
+      summary: Get valuation metrics.
+      parameters:
+        - name: market
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [US, CN]
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Valuation data with metadata.
+  /v1/equity/filings:
+    get:
+      operationId: getEquityFilings
+      summary: Get official filings or announcement links.
+      parameters:
+        - name: market
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [US, CN]
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: filing_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [annual_report, quarterly_report, semi_annual_report, current_report, all]
+            default: all
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Filing list with metadata.
+  /v1/equity/industry:
+    get:
+      operationId: getEquityIndustry
+      summary: Get industry classification and comparable data.
+      parameters:
+        - name: market
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [US, CN]
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Industry data with metadata.
+  /v1/equity/research-pack:
+    get:
+      operationId: getEquityResearchPack
+      summary: Get complete research data pack before value analysis.
+      parameters:
+        - name: market
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [US, CN]
+        - name: symbol
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Complete research pack with data quality report.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  market:
+                    type: string
+                  symbol:
+                    type: string
+                  snapshot:
+                    type: object
+                    nullable: true
+                  valuation:
+                    type: object
+                    nullable: true
+                  financials:
+                    type: object
+                    nullable: true
+                  ratios:
+                    type: object
+                    nullable: true
+                  filings:
+                    type: object
+                    nullable: true
+                  industry:
+                    type: object
+                    nullable: true
+                  data_quality_report:
+                    $ref: "#/components/schemas/DataQualityReport"
