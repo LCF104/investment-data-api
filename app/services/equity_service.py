@@ -76,7 +76,7 @@ class EquityService:
         return EquitySnapshot(**{k: v for k, v in data.items() if k not in {"provider_as_of", "source_type"}}, metadata=metadata)
 
     async def financials(self, market: str, symbol: str, period_type: str, limit: int) -> FinancialStatements:
-        provider = self._market_provider(market)
+        provider = self.sec if market == "US" else self._market_provider(market)
         data = await provider.get_financials(symbol, period_type, limit)
         freshness = check_statement_freshness(data.get("filing_date"), period_type)
         metadata = _metadata(

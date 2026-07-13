@@ -1,10 +1,10 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: Investment Data API
   version: 1.0.0
   description: Financial data middleware API for GPT Actions.
 servers:
-  - url: https://your-deployed-api-domain.com
+  - url: https://investment-data-api.onrender.com
 security:
   - bearerAuth: []
 components:
@@ -101,6 +101,27 @@ paths:
       responses:
         "200":
           description: Service status.
+  /v1/system/provider-status:
+    get:
+      operationId: getProviderStatus
+      summary: Check provider configuration and optional live availability without exposing secrets.
+      parameters:
+        - name: live
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: Run lightweight live checks against providers when true.
+      responses:
+        "200":
+          description: Provider status list with configuration state, source type, warnings, and user actions.
+        "401":
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /v1/equity/snapshot:
     get:
       operationId: getEquitySnapshot

@@ -4,6 +4,7 @@ from fastapi import FastAPI
 
 from app.config import get_settings
 from app.routers.equity import router as equity_router
+from app.routers.system import router as system_router
 from app.utils.errors import APIError, api_error_handler, unhandled_error_handler
 
 
@@ -18,6 +19,7 @@ app = FastAPI(
 app.add_exception_handler(APIError, api_error_handler)
 app.add_exception_handler(Exception, unhandled_error_handler)
 app.include_router(equity_router)
+app.include_router(system_router)
 
 
 @app.get("/health", operation_id="getHealth", tags=["system"])

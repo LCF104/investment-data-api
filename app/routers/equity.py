@@ -80,3 +80,4 @@ async def get_equity_research_pack(
     service: EquityService = Depends(get_service),
 ):
     return await service.research_pack(market, symbol)
+

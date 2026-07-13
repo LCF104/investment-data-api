@@ -108,3 +108,4 @@ def check_statement_freshness(
         "staleness_check": f"{period_type} statement may be outdated",
         "warnings": [f"Latest {period_type} statement appears stale."],
     }
+

@@ -31,3 +31,4 @@ def test_calculate_financial_ratios_from_statements():
     assert ratios["free_cash_flow"] == 160
     assert ratios["fcf_margin"] == 0.16
     assert "roe" in ratios["calculation_method"]
+

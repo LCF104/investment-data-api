@@ -146,3 +146,22 @@ class ResearchPack(BaseModel):
     filings: dict[str, Any] | None = None
     industry: dict[str, Any] | None = None
     data_quality_report: DataQualityReport
+
+
+class ProviderStatusItem(BaseModel):
+    name: str
+    configured: bool
+    status: str
+    source_type: str
+    required_env: list[str] = Field(default_factory=list)
+    last_check: datetime | None = None
+    details: dict[str, Any] = Field(default_factory=dict)
+    warnings: list[str] = Field(default_factory=list)
+    user_action: str | None = None
+
+
+class ProviderStatusResponse(BaseModel):
+    service: str
+    checked_at: datetime
+    live_check: bool = False
+    providers: list[ProviderStatusItem]

@@ -71,3 +71,13 @@ def test_research_pack_with_missing_data_cannot_analyze(client):
     assert "snapshot" in report["missing_sections"]
     assert report["blocking_issues"]
     assert report["required_user_action"]
+
+
+def test_provider_status_does_not_expose_secrets(client):
+    response = client.get("/v1/system/provider-status", headers=auth_headers())
+    assert response.status_code == 200
+    data = response.json()
+    assert data["service"] == "investment-data-api"
+    assert data["live_check"] is False
+    assert {item["name"] for item in data["providers"]} >= {"SEC EDGAR", "Financial Modeling Prep", "Tushare Pro", "CNInfo"}
+    assert "test-token" not in response.text

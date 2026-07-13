@@ -27,7 +27,7 @@ SEC_USER_AGENT=investment-data-api your_email@example.com
 
 ## Financial Modeling Prep (FMP)
 
-用途：美股股价、估值、结构化财务数据和公司行业信息。
+用途：美股股价、估值、结构化财务数据、公司行业信息。
 
 当前用于：
 
@@ -40,7 +40,14 @@ SEC_USER_AGENT=investment-data-api your_email@example.com
 注意：
 
 - FMP 是第三方结构化数据，不等于官方原始披露。
+- 财报分析时，最好用 SEC filings 交叉验证关键数据。
 - 没有 `FMP_API_KEY` 时，相关接口会返回 `MISSING_PROVIDER_KEY`。
+
+环境变量：
+
+```text
+FMP_API_KEY=你的FMP密钥
+```
 
 ## Tushare Pro
 
@@ -57,8 +64,14 @@ SEC_USER_AGENT=investment-data-api your_email@example.com
 注意：
 
 - Tushare 是第三方结构化数据，不等于交易所或上市公司原始公告。
-- 不同接口需要不同权限和积分。
+- 不同 Tushare 接口需要不同权限和积分。
 - 没有 `TUSHARE_TOKEN` 时，相关接口会返回 `MISSING_PROVIDER_KEY`。
+
+环境变量：
+
+```text
+TUSHARE_TOKEN=你的Tushare token
+```
 
 ## 巨潮资讯 / 交易所公告
 
@@ -66,9 +79,16 @@ SEC_USER_AGENT=investment-data-api your_email@example.com
 
 当前版本：
 
-- 保留了 `CNInfoProvider` 结构。
-- `/v1/equity/filings?market=CN` 会返回 `not_implemented` 状态和 warning。
-- 不会静默返回空数组来假装没有公告。
+- 已实现 `CNInfoProvider` 初版公开查询。
+- `/v1/equity/filings?market=CN` 可返回公告元数据、披露日期和 PDF URL。
+- 公开查询接口可能变化或限流；生产级覆盖仍建议使用授权公告数据源。
+- 搜不到公告时应区分 `no_matching_filings` 与 provider 错误，不应静默假装数据完整。
+
+为什么仍需谨慎：
+
+- 公开查询接口可能变化。
+- 某些网页查询依赖动态参数、验证码、频率限制或反爬策略。
+- 金融数据系统不应把不稳定公开网页查询作为唯一官方公告来源。
 
 后续可接入方案：
 

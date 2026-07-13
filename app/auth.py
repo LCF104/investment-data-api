@@ -33,3 +33,4 @@ def require_bearer_token(
             status.HTTP_401_UNAUTHORIZED,
             user_action="Check the token configured in GPT Builder Actions.",
         )
+

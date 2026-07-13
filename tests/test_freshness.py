@@ -34,3 +34,4 @@ def test_statement_freshness_checks_period_age():
     now = datetime(2026, 7, 7, tzinfo=timezone.utc)
     result = check_statement_freshness("2026-05-01", "quarterly", now)
     assert result["is_latest_available"] is True
+

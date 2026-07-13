@@ -26,3 +26,4 @@ class EquityProvider(ABC):
     @abstractmethod
     async def get_industry(self, symbol: str) -> dict[str, Any]:
         raise NotImplementedError
+

@@ -142,3 +142,4 @@ class TushareProvider:
             "source_type": "third_party_structured",
             "warnings": ["A-share industry valuation medians require Wind, Choice, iFinD, Tushare Pro extensions, or a maintained comparable universe."],
         }
+

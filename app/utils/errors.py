@@ -66,3 +66,4 @@ async def unhandled_error_handler(_: Request, exc: Exception) -> JSONResponse:
             "Please check server logs and try again.",
         ),
     )
+
